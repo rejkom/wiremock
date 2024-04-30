@@ -1,5 +1,8 @@
 package com.rejkom;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import io.restassured.response.Response;
@@ -31,14 +34,25 @@ public class WiremockDeclarativeTest {
 
         //assert
         assertTrue(response.getBody().asPrettyString().contains("Animal"));
-
     }
 
-    //TODO: json body
-
     @Test
-    void getRequestWithRuntimeInfoTest(WireMockRuntimeInfo runtimeInfo) {
+    void getRequestWithRuntimeInfoTest(WireMockRuntimeInfo runtimeInfo) throws JsonProcessingException {
+        //arrange
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode expectedJson = mapper.readTree("{\"key\": \"value\"}");
         System.out.println("Running on host: " + runtimeInfo.getHttpBaseUrl());
+        stubFor(post(urlEqualTo("/json-endpoint")).withRequestBody(equalToJson(expectedJson.toString()))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBody("{\"message\": \"JSON matched successfully\"}")));
+
+        //act
+        String response = given().baseUri("http://localhost").port(8080)
+                .body("{\"key\": \"value\"}").post("/json-endpoint").thenReturn().getBody().print();
+
+        //assert
+        System.out.println("Response body: " + response);
+        assertTrue(response.contains("successfully"));
     }
 
 }
