@@ -1,0 +1,21 @@
+{
+  "id" : "00c091d7-53e2-42c7-a8a0-3111d6804fd7",
+  "name" : "recordables_123",
+  "request" : {
+    "url" : "/recordables/123",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{ \"message\": \"Congratulations on your first recording!\" }",
+    "headers" : {
+      "Matched-Stub-Id" : "bc56987f-c14f-40ae-a495-9686d8bf925e",
+      "Matched-Stub-Name" : "WireMock recorder example",
+      "Vary" : "Origin",
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "00c091d7-53e2-42c7-a8a0-3111d6804fd7",
+  "persistent" : true,
+  "insertionIndex" : 7
+}
