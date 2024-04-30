@@ -30,6 +30,8 @@ public class WiremockApplication {
         WireMockServer wireMockServer = new WireMockServer();
         wireMockServer.start();
 
+        //'configureFor()' needed when we don't use a default server configuration like http://localhost:8080
+        // to let know to which server stubs relate. If default then can be skipped
         configureFor("localhost", 8080);
 
         //GET stub example
@@ -37,7 +39,6 @@ public class WiremockApplication {
 
         //Error resource example
         stubFor(get(("/error")).willReturn(serverError().withBody("Internal Server Error occurred")));
-
 
         //Open sesame stub and authorization handler
         stubFor(get("/open/sesame")
@@ -49,12 +50,27 @@ public class WiremockApplication {
 
         //Greetings: POST with expected body
         stubFor(post(urlMatching("/greetings/[0-9]+"))
+                .atPriority(1) //can set a priority if multiple stubs matching
                 .withRequestBody(containing("hello")) //request has to contain 'hello' in a request
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json") //response
                         .withBody("{\"message\" : \"Thanks for greetings!\"}")));
-        stubFor(post("/greetings/[0-9]+")
+
+        stubFor(post("/greetings/[0-9]+") //answer for above but when body doesn't contain 'hello'
                 .willReturn(aResponse().withStatus(400).withHeader("Content-Type", "application/json")
                         .withBody("{\"error\": \"Request doesn't contain 'hello' greetings\"}")));
+
+        //Application: POST with expected multiple bodies
+        stubFor(post(urlEqualTo("/application")).withHeader("Content-Type", equalTo("application/json"))
+                .withRequestBody(containing("\"name\": \"WireMock\""))
+                .withRequestBody(containing("\"id\": \"12345\""))
+                .willReturn(ok()));
+
+
+        //Return xml body from a file
+        stubFor(get(urlMatching("/users/123")).willReturn(aResponse()
+                .withHeader("Content-Type", "application/xml").withBodyFile("response-body.xml")));
+
     }
+
 
 }
