@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person>
+    <id>123</id>
+    <name>Joe Kowalski</name>
+    <email>joekowalski@example.com</email>
+    <phone>123-456-7890</phone>
+    <address>
+        <street>123 Main St</street>
+        <city>Central Park</city>
+        <state>Madagascar</state>
+        <zip>12345</zip>
+    </address>
+</person>
